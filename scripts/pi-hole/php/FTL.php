@@ -6,12 +6,35 @@
 *  This file is copyright under the latest version of the EUPL.
 *  Please see LICENSE file for your rights under this license. */
 
+function piholeFTLConfig()
+{
+	global $piholeFTLConfig;
+
+	if(isset($piholeFTLConfig))
+	{
+		return $piholeFTLConfig;
+	}
+
+	$piholeFTLConfFile = "/etc/pihole/pihole-FTL.conf";
+	if(is_readable($piholeFTLConfFile))
+	{
+		$piholeFTLConfig = parse_ini_file($piholeFTLConfFile);
+	}
+	else
+	{
+		$piholeFTLConfig = array();
+	}
+
+	return $piholeFTLConfig;
+}
+
 function connectFTL($address, $port=4711)
 {
 	if($address == "127.0.0.1")
 	{
+		$config = piholeFTLConfig();
 		// Read port
-		$portfile = file_get_contents("/var/run/pihole-FTL.port");
+		$portfile = file_get_contents($config["PORTFILE"]);
 		if(is_numeric($portfile))
 			$port = intval($portfile);
 	}
